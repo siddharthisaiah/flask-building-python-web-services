@@ -19,22 +19,18 @@
         <form>
             from:   <select name="currency_from">
                         {% for currency in currencies %}
-                            <option value="{{currency}}">{{currency}}</option>
+                            <option value="{{currency}}" {% if currency_from== currency %} selected="selected" {% endif %}>{{currency}}</option>
                         {% endfor %}
                     </select>
             to:     <select name="currency_to">
                         {% for currency in currencies %}
-                            <option value="{{currency}}">{{currency}}</option>
+                            <option value="{{currency}}" {% if currency_to== currency %} selected="selected" {% endif %}>{{currency}}</option>
                         {% endfor %}
                     </select>
                     <input type="submit" value="Submit">
         </form>
         <p>1 {{currency_from}} = {{currency_to}} {{rate}}</p>
 
-
-        
-        
-        
 
         <hr>
         <form>
