@@ -33,7 +33,7 @@ input[type="submit"]:hover {
     float: left;
 }
 
-#newcrimeform {
+.newcrimeform {
     float: right;
     width: 25%;
 }
