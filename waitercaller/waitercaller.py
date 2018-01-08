@@ -15,6 +15,7 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from bitlyhelper import BitlyHelper
+from forms import RegistrationForm
 from mockdbhelper import MockDBHelper as DBHelper
 from passwordhelper import PasswordHelper
 from user import User
@@ -31,7 +32,9 @@ login_manager = LoginManager(app)
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+    registrationform = RegistrationForm()
+    return render_template("home.html",
+                           registrationform=registrationform)
 
 
 @app.route("/account")
@@ -68,17 +71,16 @@ def logout():
 
 @app.route("/register", methods=["POST"])
 def register():
-    email = request.form.get("email")
-    pw1 = request.form.get("password")
-    pw2 = request.form.get("password2")
-    if not pw1 == pw2:
-        return redirect(url_for("home"))
-    if DB.get_user(email):
-        return redirect(url_for("home"))
-    salt = PH.get_salt()
-    hashed = PH.get_hash(pw1 + salt)
-    DB.add_user(email, salt, hashed)
-    return redirect(url_for("home"))
+    form = RegistrationForm(request.form)
+    if form.validate():
+        if DB.get_user(form.email.data):
+            form.email.errors.append("Email already registered")
+            return render_template('home.html', registrationform=form)
+        salt = PH.get_salt()
+        hashed = PH.get_hash(form.password2.data + salt)
+        DB.add_user(form.email.data, salt, hashed)
+        return render_template('home.html', registrationform=form, onloadmessage="Registration successful. Please log in.")
+    return render_template('home.html', registrationform=form)
 
 
 @app.route("/dashboard")
